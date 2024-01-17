@@ -5,6 +5,7 @@ WDATA=$2
 FOLD=$3
 GPUS=$4
 RESUME=$5
+
 PYTHONPATH=.  python -u -m torch.distributed.launch \
  --nproc_per_node=$GPUS \
  --master_port 9901 \
@@ -12,7 +13,7 @@ PYTHONPATH=.  python -u -m torch.distributed.launch \
  --world-size $GPUS  \
  --distributed \
  --config configs/v2l_tune.json \
- --workers 8 \
+ --workers 1 \
  --multiplier 1 \
  --data-dir $WDATA \
  --train-dir $DATA \

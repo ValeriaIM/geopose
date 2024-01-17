@@ -271,6 +271,7 @@ class UnetDecoderBlock2Conv(nn.Module):
     def forward(self, x):
         return self.layer(x)
 
+
 class TimmUnetFeat(TimmUnet):
 
     def __init__(self, encoder='resnet34', use_last_decoder=True, **kwargs):

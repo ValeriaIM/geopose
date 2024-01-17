@@ -15,13 +15,14 @@ cv2.setNumThreads(0)
 
 
 if __name__ == "__main__":
+    print('starting main')
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", action="store_true", help="train model")
     parser.add_argument("--test", action="store_true", help="generate test predictions")
     parser.add_argument("--predict", action="store_true", help="predict for large images")
     parser.add_argument("--gpus", type=str, default="0")
-    # parser.add_argument("--local_rank", type=int, default=0)
     parser.add_argument("--world_size", type=int, default=2)
+    parser.add_argument("--local_rank", type=int, default=0)
     parser.add_argument(
         "--num-workers", type=int, help="number of data loader workers", default=1
     )
@@ -81,6 +82,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    print(f'parsed args: {args}')
     local_rank = int(os.environ["LOCAL_RANK"])
     dist.init_process_group(backend="nccl", rank=local_rank, world_size=args.world_size)
     torch.cuda.set_device(local_rank)

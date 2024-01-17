@@ -14,4 +14,12 @@ submission*
 myfiles/
 .gitignore
 .idea/
-
+.ipynb_checkpoints/
+build/
+data/
+*.ipynb
+logs/
+output/
+preds/
+weights/
+test/

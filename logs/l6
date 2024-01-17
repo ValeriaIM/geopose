@@ -2,12 +2,127 @@ in dist_train.sh
 Starting create data datasets
 Start create train dataset
 Start create val dataset
-TrainConfiguration(config_path='configs/v2l.json', gpu='0', distributed=True, from_zero=False, zero_score=False, local_rank=0, freeze_epochs=0, test_every=2, world_size=1, output_dir='weights/', prefix='folds_', resume_checkpoint='', workers=8, log_dir='logs')
+init pytorch trainer
+TrainConfiguration(config_path='configs/v2l.json', gpu='0', distributed=True, from_zero=False, zero_score=False, local_rank=0, freeze_epochs=0, test_every=2, world_size=1, output_dir='/home/s0105/_scratch2/project/weights/', prefix='folds_', resume_checkpoint='', workers=5, log_dir='logs')
 param_groups 2
-in dist_train_tune.sh
-Starting create data datasets
-Start create train dataset
-Start create val dataset
-TrainConfiguration(config_path='configs/v2l_tune.json', gpu='0', distributed=True, from_zero=True, zero_score=False, local_rank=0, freeze_epochs=0, test_every=2, world_size=1, output_dir='weights/', prefix='folds_', resume_checkpoint='/content/drive/MyDrive/Github/geopose/weights/folds_TimmUnet_tf_efficientnetv2_l_in21k_6_r2', workers=8, log_dir='logs')
-=> no checkpoint found at '/content/drive/MyDrive/Github/geopose/weights/folds_TimmUnet_tf_efficientnetv2_l_in21k_6_r2'
-param_groups 2
+fit pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+ARG R-square:  nan
+JAX R-square:  nan
+OMA R-square:  nan
+ATL R-square:  nan
+FINAL R-square:  nan
+Best R2 AGL 0.0000 current nan
+__save_best pytorch trainer
+exception!

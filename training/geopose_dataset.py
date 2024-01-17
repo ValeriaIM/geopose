@@ -27,7 +27,8 @@ transforms = [
     A.RandomBrightnessContrast(p=0.5),
     A.RandomGamma(p=0.3)
 ]
-transforms =  A.Compose(transforms)
+transforms = A.Compose(transforms)
+
 
 def load_image(
         image_path,
@@ -100,6 +101,7 @@ class GeoposeDataset(Dataset):
             rng=RNG,
     ):
         self.dataset_dir = dataset_dir
+        print(f'dataset dir in GeoposeDataset: {dataset_dir}')
         self.crop_size = crop_size
         self.is_val = mode == "val"
         self.is_train = mode == "train"
@@ -125,13 +127,15 @@ class GeoposeDataset(Dataset):
             rgb_path = os.path.join(self.dataset_dir, f"{city}_{file_id}_RGB.tif")
             agl_path = os.path.join(self.dataset_dir, f"{city}_{file_id}_AGL.tif")
             vflow_path = os.path.join(self.dataset_dir, f"{city}_{file_id}_VFLOW.json")
+            facade_path = os.path.join(self.dataset_dir, f"{city}_{file_id}_FACADE.tif")
             image = load_image(rgb_path, self.nan_placeholder, self.unit)
             agl = load_image(agl_path, self.nan_placeholder, self.unit)
+            facade = load_image(facade_path, self.nan_placeholder, self.unit)
             mag, xdir, ydir, vflow_data = load_vflow(vflow_path, agl, unit=self.unit)
             scale = vflow_data["scale"]
             if self.is_train:
                 image = transforms(image=image)["image"]
-                image, mag, xdir, ydir, agl, scale = augment_vflow(
+                image, mag, xdir, ydir, agl, facade, scale = augment_vflow(
                     image,
                     mag,
                     xdir,
@@ -139,6 +143,7 @@ class GeoposeDataset(Dataset):
                     vflow_data["angle"],
                     vflow_data["scale"],
                     agl=agl,
+                    facade=facade
                 )
             xdir = np.float32(xdir)
             ydir = np.float32(ydir)
@@ -147,6 +152,8 @@ class GeoposeDataset(Dataset):
             scale = np.float32(scale)
 
             xydir = np.array([xdir, ydir])
+
+            facade = np.float32(facade)
 
             crop_size = self.crop_size
             height = image.shape[0]
@@ -163,6 +170,7 @@ class GeoposeDataset(Dataset):
                     agl = agl[y: y + crop_size, x:x + crop_size]
                     image = image[y: y + crop_size, x:x + crop_size]
                     mag = mag[y: y + crop_size, x:x + crop_size]
+                    facade = facade[y: y + crop_size, x: x + crop_size]
                     break
                 else:
                     break
@@ -175,7 +183,7 @@ class GeoposeDataset(Dataset):
             agl_target_mean = np.array([agl_mean_by_city[city]])
             return {"image": image, "xydir": xydir, "agl": agl, "mag": mag, "scale": scale, "city_ohe": city_ohe,
                     "city": city, "mag_target_mean": mag_target_mean, "agl_target_mean": agl_target_mean,
-                    "name": file_id}
+                    "name": file_id, "facade": facade}
         except:
             traceback.print_exc()
             return self.__getitem__(random.randint(0, len(self.names) - 1))

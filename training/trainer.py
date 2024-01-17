@@ -34,7 +34,7 @@ class TrainConfiguration:
     freeze_epochs: int = 0,
     test_every: int = 1
     world_size: int = 1
-    output_dir: str = "/content/drive/MyDrive/Github/geopose/weights/"
+    output_dir: str = "/home/s0105/_scratch2/project/weights/"
     prefix: str = ""
     resume_checkpoint: str = None
     workers: int = 8
@@ -147,12 +147,15 @@ class PytorchTrainer(ABC):
             self.optimizer.zero_grad()
             with torch.cuda.amp.autocast():
                 output = self.model(imgs)
+                # print(f"output: {output.keys()}")
+                # print(f"height size: {output['height'].size()}, mag size: {output['mag'].size()}")
                 total_loss = 0
                 for loss_def in self.losses:
                     l = loss_def.loss.calculate_loss(output, sample)
                     if loss_def.display:
                         avg_meters[loss_def.name].update(l.item(), imgs.size(0))
                     total_loss += loss_def.weight * l
+
             loss_meter.update(total_loss.item(), imgs.size(0))
             avg_metrics = {k: v.avg for k, v in avg_meters.items()}
             iterator.set_postfix({"lr": float(self.scheduler.get_lr()[-1]),
@@ -193,6 +196,7 @@ class PytorchTrainer(ABC):
                                        num_workers=self.train_config.workers,
                                        shuffle=train_sampler is None, sampler=train_sampler, pin_memory=False,
                                        drop_last=True)
+        print(f'train_data_loader len: {len(train_data_loader)}, batch size: {self.train_batch_size}')
 
         return train_data_loader
 

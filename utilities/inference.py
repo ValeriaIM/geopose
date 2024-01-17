@@ -28,6 +28,8 @@ from utilities.misc_utils import (
     load_image,
     load_vflow,
     save_image,
+    visualize,
+    save_image_polygonal,
 )
 from utilities.unet import TimmUnet
 
@@ -185,13 +187,15 @@ def test(args):
         predictions_dir = Path(args.predictions_dir)
         for images, rgb_paths in tqdm(test_loader):
             images = images.float().cuda()
+            # print(images)
             pred = predict_tta(models, images)
-
+            # print("pred", pred)
             numpy_preds = []
             for i in range(len(pred)):
                 numpy_preds.append(pred[i].detach().cpu().numpy())
 
             xydir_pred, agl_pred, mag_pred, scale_pred = numpy_preds
+            # print("agl_pred", agl_pred)
 
             if scale_pred.ndim == 0:
                 scale_pred = np.expand_dims(scale_pred, axis=0)
@@ -209,6 +213,7 @@ def test(args):
                 # agl pred
                 curr_agl_pred = agl_pred[batch_ind, 0, :, :]
                 curr_agl_pred[curr_agl_pred < 0] = 0
+                # print("curr_agl_pred", curr_agl_pred)
                 agl_resized = cv2.resize(
                     curr_agl_pred,
                     (
@@ -217,6 +222,7 @@ def test(args):
                     ),
                     interpolation=cv2.INTER_NEAREST,
                 )
+                # print("agl_resized", agl_resized)
 
                 # save
                 rgb_path = predictions_dir / Path(rgb_paths[batch_ind]).name
@@ -261,17 +267,84 @@ def predict(args):
 
     with torch.no_grad():
         tile_size = 2048
-        img = load_image(args.dataset_dir, args)
-        w, h, z = img.shape
-        print(f"image shape is: {img.shape}")
+        dataset_dir = Path(args.dataset_dir)
+        rgb_paths = list(dataset_dir.glob(f"*_RGB.{args.rgb_suffix}"))
+        agl_paths = list(
+            pth.with_name(pth.name.replace("_RGB", "_AGL")).with_suffix(".tif")
+            for pth in rgb_paths
+        )
+        agl_paths = [args.predictions_dir / Path(pth.name) for pth in agl_paths]
+        vflow_paths = list(
+            pth.with_name(pth.name.replace("_RGB", "_VFLOW")).with_suffix(".json")
+            for pth in rgb_paths
+        )
+        vflow_paths = [args.predictions_dir / Path(pth.name) for pth in vflow_paths]
+        print(f"rgb_paths: {rgb_paths}")
+        print(f"agl paths: {agl_paths}")
 
-        res_shape = (math.ceil(float(w) / tile_size)*tile_size, math.ceil(float(h) / tile_size)*tile_size, z)
-        print(f"res shape: {res_shape}")
+        for filecount in range(len(rgb_paths)):
+            img = load_image(rgb_paths[filecount], args)
+            image_copy = img
+            print(f"image shape is: {img.shape}")
+            w, h, z = img.shape
 
-        w_new = res_shape[0]
-        h_new = res_shape[1]
+            res_shape = (math.ceil(float(w) / tile_size)*tile_size, math.ceil(float(h) / tile_size)*tile_size, z)
+            print(f"res shape: {res_shape}")
 
-        # img = img.float().cuda()
-        # pred = predict_tta(models, img)
+            w_new = res_shape[0]
+            h_new = res_shape[1]
+            res = np.zeros(res_shape, dtype=np.float32)
+            res[:w, :h, :] = img
+            img = res
+            # img = np.transpose(img, [2, 0, 1])
+            img = (np.transpose(img, (2, 0, 1)) / 255. - 0.5) * 2
+            img = img.reshape((1,) + img.shape)
+            print(f"img final shape: {img.shape}")
+            # img = img.float().cuda()
 
-        # agl_pred = pred[1].detach().cpu().numpy()
+            res = np.zeros((1, w_new, h_new), dtype=np.float32)
+            print(f"res final shape: {res.shape}")
+            i = j = 0
+            step = tile_size
+
+            vflow_data = {}
+
+            with tqdm(total=(w_new // step) * (h_new // step)) as pbar:
+                while i + tile_size <= w_new:
+                    j = 0
+                    while j + tile_size <= h_new:
+                        # print(f'i is {i} j is {j}')
+                        frag = img[:, :, i:i+tile_size, j:j+tile_size]
+                        # print(f"frag shape: {frag.shape}")
+                        frag = torch.from_numpy(frag)
+                        # print(f"frag dtype: {frag.dtype}")
+                        out = predict_tta(models, frag)
+                        # print(f"out length: {len(out)}, out: {out}")
+                        agl_pred = out[1].detach().cpu().numpy()
+                        agl_pred = agl_pred[0, 0, :, :]
+                        # print(f"agl pred shape: {agl_pred.shape}")
+                        agl_pred[agl_pred < 0] = 0
+                        res[:, i:i+tile_size, j:j+tile_size] = agl_pred[:, :]
+                        # print(f"agl sliced: {agl_pred[:, :]}")
+                        # print(f"res: {res}")
+
+                        xydir_pred = out[0].detach().cpu().numpy()
+                        scale_pred = out[3].detach().cpu().numpy()
+                        angle = np.arctan2(xydir_pred[0][0], xydir_pred[0][1])
+                        vflow_data = {
+                            "scale": np.float64(
+                                scale_pred[0] * args.downsample
+                            ),  # upsample
+                            "angle": np.float64(angle),
+                        }
+                        print(f"VFLOW data: {vflow_data}")
+
+                        j += tile_size
+                    i += tile_size
+
+            res = res.reshape((w_new, h_new))
+            res = res[:w, :h]
+
+            # cv2.imwrite(args.predictions_dir + '/res.tif', res)
+            save_image_polygonal(agl_paths[filecount], res)
+            json.dump(vflow_data, vflow_paths[filecount].open("w"))

@@ -6,7 +6,7 @@ from segmentation_models_pytorch.base.modules import Activation
 
 
 from typing import Optional, Union, List
-from segmentation_models_pytorch.decoders.unet.decoder import UnetDecoder
+from segmentation_models_pytorch.unet.decoder import UnetDecoder
 from segmentation_models_pytorch.encoders import get_encoder
 
 

@@ -120,7 +120,7 @@ def parse_args():
     arg('--config', metavar='CONFIG_FILE', help='path to configuration file', default="configs/b3.json")
     arg('--workers', type=int, default=16, help='number of cpu threads to use')
     arg('--gpu', type=str, default='0', help='List of GPUs for parallel training, e.g. 0,1,2,3')
-    arg('--output-dir', type=str, default='/content/drive/MyDrive/Github/geopose/weights/')
+    arg('--output-dir', type=str, default='/home/s0105/_scratch2/project/weights/')
     arg('--resume', type=str, default='')
     arg('--fold', type=int, default=0)
     arg('--prefix', type=str, default='')
@@ -147,6 +147,7 @@ def parse_args():
 
 def create_data_datasets(args):
     print("Start create train dataset")
+    print(f'train dataset dir: {args.data_dir}')
     train_dataset = GeoposeDataset(mode="train", dataset_dir=args.data_dir, folds_csv=args.folds_csv, fold=args.fold,
                                        crop_size=args.crop, multiplier=args.multiplier)
     print("Start create val dataset")

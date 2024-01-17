@@ -11,7 +11,7 @@ PYTHONPATH=.  python -u -m torch.distributed.launch \
  --world-size $GPUS  \
  --distributed \
  --config configs/v2l.json \
- --workers 8 \
+ --workers 1 \
  --multiplier 4 \
  --data-dir $WDATA \
  --train-dir $DATA \

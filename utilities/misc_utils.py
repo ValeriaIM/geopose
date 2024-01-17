@@ -2,9 +2,11 @@ from pathlib import Path
 from osgeo import gdal
 import numpy as np
 import json
-import os
+import cv2
 from tqdm import tqdm
 from PIL import Image
+import matplotlib.pyplot as plt
+import imageio.v2 as imageio
 
 
 UNITS_PER_METER_CONVERSION_FACTORS = {"cm": 100.0, "m": 1.0}
@@ -33,6 +35,28 @@ def save_image(img_path, img):
     driver = None
 
 
+def save_image_polygonal(img_path, img):
+    rows = img.shape[0]
+    cols = img.shape[1]
+    bands = 1
+    if np.ndim(img) == 3:
+        bands = img.shape[2]
+    if img.dtype == np.uint8:
+        data_type = gdal.GDT_Byte
+    else:
+        data_type = gdal.GDT_Float32
+    driver = gdal.GetDriverByName("GTiff").Create(
+        str(img_path), cols, rows, bands, data_type, ["COMPRESS=LZW"]
+    )
+    if bands == 1:
+        driver.GetRasterBand(1).WriteArray(img[:, :])
+    else:
+        for i in range(bands):
+            driver.GetRasterBand(i + 1).WriteArray(img[:, :, i])
+    driver.FlushCache()
+    driver = None
+
+
 def load_image(
     image_path,
     args,
@@ -45,6 +69,13 @@ def load_image(
         return None
     image = gdal.Open(str(image_path))
     image = image.ReadAsArray()
+    # image = cv2.imread(str(image_path))
+
+    # try:
+    #     print(f"image shape from load_image: {image.shape}")
+    # except AttributeError:
+    #     print(f"AttributeError in image: {image_path}")
+    #     image = imageio.imread(image_path)
 
     # convert AGL units and fill nan placeholder with nan
     if "AGL" in image_path.name:
@@ -162,3 +193,18 @@ def convert_and_compress_prediction_dir(
         vflow["scale"] = vflow["scale"] / conversion_factor
         new_json_path = converted_predictions_dir / json_path.name
         json.dump(vflow, new_json_path.open("w"))
+
+
+def visualize(**images):
+    """Функция для визуализации данных, располагает изображения в ряд"""
+    n = len(images)
+    plt.figure(figsize=(16, 5))
+
+    for i, (name, image) in enumerate(images.items()):
+        plt.subplot(1, n, i + 1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.title(' '.join(name.split('_')).title())
+        plt.imshow(image)
+
+    plt.show()

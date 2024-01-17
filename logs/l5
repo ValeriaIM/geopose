@@ -1,13 +1,87 @@
 in dist_train.sh
 Starting create data datasets
 Start create train dataset
+train dataset dir: /home/s0105/_scratch2/project/data/train_tiffs_full
+dataset dir in GeoposeDataset: /home/s0105/_scratch2/project/data/train_tiffs_full
 Start create val dataset
-TrainConfiguration(config_path='configs/v2l.json', gpu='0', distributed=True, from_zero=False, zero_score=False, local_rank=0, freeze_epochs=0, test_every=2, world_size=1, output_dir='weights/', prefix='folds_', resume_checkpoint='', workers=8, log_dir='logs')
+dataset dir in GeoposeDataset: /home/s0105/_scratch2/project/data/train_tiffs_full
+init pytorch trainer
+TrainConfiguration(config_path='configs/v2l.json', gpu='0', distributed=True, from_zero=False, zero_score=False, local_rank=0, freeze_epochs=0, test_every=2, world_size=1, output_dir='/home/s0105/_scratch2/project/weights/', prefix='folds_', resume_checkpoint='', workers=2, log_dir='logs')
 param_groups 2
-in dist_train_tune.sh
-Starting create data datasets
-Start create train dataset
-Start create val dataset
-TrainConfiguration(config_path='configs/v2l_tune.json', gpu='0', distributed=True, from_zero=True, zero_score=False, local_rank=0, freeze_epochs=0, test_every=2, world_size=1, output_dir='weights/', prefix='folds_', resume_checkpoint='/content/drive/MyDrive/Github/geopose/weights/folds_TimmUnet_tf_efficientnetv2_l_in21k_5_r2', workers=8, log_dir='logs')
-=> no checkpoint found at '/content/drive/MyDrive/Github/geopose/weights/folds_TimmUnet_tf_efficientnetv2_l_in21k_5_r2'
-param_groups 2
+fit pytorch trainer
+train_data_loader len: 10662, batch size: 2
+train_data_loader len: 10662, batch size: 2
+Computing AGL and VFLOW R-squares...
+
+ARG MEAN ERROR
+Angle error: 9.349190
+Scale error: 0.225042
+Mag error: 2.048863
+EPE: 2.224042
+AGL error: 1.744265
+ROOT MEAN SQUARE ERROR
+Angle error: 12.040506
+Scale error: 0.268748
+Mag error: 3.346657
+EPE error: 3.486423
+AGL error: 2.716518
+AGL R-square:  0.6041546396290951
+VFLOW R-square:  0.7104131661246461
+Computing AGL and VFLOW R-squares...
+
+JAX MEAN ERROR
+Angle error: 9.358645
+Scale error: 0.207109
+Mag error: 2.548835
+EPE: 2.699604
+AGL error: 2.262509
+ROOT MEAN SQUARE ERROR
+Angle error: 16.522194
+Scale error: 0.255528
+Mag error: 6.020009
+EPE error: 6.123168
+AGL error: 4.735933
+AGL R-square:  0.61423843406222
+VFLOW R-square:  0.595652276588677
+Computing AGL and VFLOW R-squares...
+
+OMA MEAN ERROR
+Angle error: 14.701406
+Scale error: 0.178437
+Mag error: 1.617275
+EPE: 1.729968
+AGL error: 1.453052
+ROOT MEAN SQUARE ERROR
+Angle error: 26.184883
+Scale error: 0.228087
+Mag error: 4.039135
+EPE error: 4.179623
+AGL error: 3.319007
+AGL R-square:  0.6203290895387847
+VFLOW R-square:  0.5945543826466474
+Computing AGL and VFLOW R-squares...
+
+ATL MEAN ERROR
+Angle error: 13.905457
+Scale error: 0.165129
+Mag error: 3.063890
+EPE: 3.521368
+AGL error: 4.429632
+ROOT MEAN SQUARE ERROR
+Angle error: 16.626587
+Scale error: 0.201051
+Mag error: 6.751343
+EPE error: 7.103844
+AGL error: 8.688910
+AGL R-square:  0.572678808505589
+VFLOW R-square:  0.5428147363325198
+ARG R-square:  0.6572839028768707
+JAX R-square:  0.6049453553254485
+OMA R-square:  0.607441736092716
+ATL R-square:  0.5577467724190543
+FINAL R-square:  0.6068544416785224
+R2 AGL improved from 0.0000 to 0.6069
+__save_best pytorch trainer
+train_data_loader len: 10662, batch size: 2
+train_data_loader len: 10662, batch size: 2
+exception!
