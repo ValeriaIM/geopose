@@ -21,6 +21,24 @@ class RegressionHead(nn.Sequential):
         activation = Activation(None)
         super().__init__(conv2d, identity, activation)
 
+# Код головы из segm_models_pytorch
+# class SegmentationHead(nn.Sequential):
+#     def __init__(self, in_channels, out_channels, kernel_size=3, activation=None, upsampling=1):
+#         conv2d = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, padding=kernel_size // 2)
+#         upsampling = nn.UpsamplingBilinear2d(scale_factor=upsampling) if upsampling > 1 else nn.Identity()
+#         activation = Activation(activation)
+#         super().__init__(conv2d, upsampling, activation)
+
+
+class SegmentationHead(nn.Sequential):
+    def __init__(self, in_channels, out_channels, kernel_size=3):
+        conv2d = nn.Conv2d(
+            in_channels, out_channels, kernel_size, padding=kernel_size // 2
+        )
+        identity = nn.Identity()
+        activation = Activation("sigmoid")  # взята из работающего проекта по сегментации воды
+        super().__init__(conv2d, identity, activation)
+
 
 class EncoderRegressionHead(nn.Sequential):
     def __init__(self, in_channels, out_channels, kernel_size=3):
